@@ -1,0 +1,238 @@
+				#set($i=0)
+            	#set($name1="")
+            	#set($name2="")
+            	#set($name3="")
+     			#foreach($v in $table.name.split("_"))
+     				#set($i=$i+1)
+     				#if(${i}==1)
+     					#set($name1=$v)
+     				#end
+     				#if(${i}==2)
+     					#set($name2=$v)
+     				#end
+     				#if(${i}==3)
+     					#set($name3=$v)
+     				#end
+           		#end
+<div class="mini-toolbar" style="border-left:0;border-right:0;border-top:0;padding:0px;">
+    <table style="width:100%;">
+        <tr>
+            <td style="width:100%;">
+            </td>
+            <td style="white-space:nowrap;">
+                <a class="mini-button" iconCls="icon-save" onclick="onOk">保存</a>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="mini-tabs" activeIndex="0"  style="margin:5px;">
+    <div title="基本信息">
+        <form id="form1" method="post">
+        #if(!${entityLombokModel})
+#foreach($field in ${table.fields})
+#if(${field.keyFlag})##生成主键排在第一位
+ 			<input name="${field.propertyName}" class="mini-hidden" />
+#end
+#end
+#end
+            <table border="0" cellpadding="1" cellspacing="2" style="width:100%;table-layout:fixed;">
+#if(!${entityLombokModel})
+#foreach($field in ${table.fields})
+#if(!${field.keyFlag})##生成主键排在第一位
+#if($field.name.length()>4&&${field.name.substring(0,4).indexOf("dict")}!=-1)
+ 				 <tr>
+                    <td style="width:60px;">${field.comment}：</td>
+                    <td style="width:50%">
+                       <input id="${field.propertyName}" name ="${field.propertyName}" class="mini-combobox" style="width:150px;" textField="dicValue" valueField="dicKey" valueField="id"
+                               url="$${name1}Content/$name1.substring(0,1).toUpperCase()$name1.substring(1)Screen.do?action=$name2.substring(0,1).toUpperCase()$name2.substring(1)$name3.substring(0,1).toUpperCase()$name3.substring(1)Action&event_submit_do_view_${field.name}_json=method"  required="true" allowInput="true" showNullItem="false" />
+                    </td>
+                </tr>
+#else
+#if(${field.type.indexOf("varchar")}!=-1)
+#set($length1=$field.type.length() - 1)  
+ 				 <tr>
+                    <td style="width:60px;">${field.comment}：</td>
+                    <td style="width:50%">
+                        <input  name="${field.propertyName}" class="mini-textbox" style="width:100%;" required="true"  maxLength="$field.type.substring(8,$length1)" />
+                    </td>
+                </tr>
+#elseif(${field.type.indexOf("char")}!=-1)
+#set($length2=$field.type.length() - 1)  
+   				 <tr>
+                    <td style="width:60px;">${field.comment}：</td>
+                    <td style="width:50%">
+                        <input  name="${field.propertyName}" class="mini-textbox" style="width:100%;" required="true"  maxLength="$field.type.substring(5,$length2)" />
+                    </td>
+                </tr>
+#elseif(${field.type.indexOf("datetime")}!=-1)   
+#if(!$field.capitalName.equals("UpdateTime")&&!$field.capitalName.equals("CreateTime"))
+				<tr>
+                    <td style="width:60px;">${field.comment}：</td>
+                    <td style="width:50%">
+                        <input  name="${field.propertyName}" class="mini-datepicker" style="width:200px;"  nullValue="null"
+        format="yyyy-MM-dd H:mm:ss" timeFormat="H:mm:ss" showTime="true" showOkButton="true" showClearButton="false" required="true" />
+                    </td>
+                </tr> 
+#else                 
+#end
+#elseif(${field.type.indexOf("date")}!=-1) 
+#if(!$field.capitalName.equals("UpdateTime")&&!$field.capitalName.equals("CreateTime"))
+				<tr>
+                    <td style="width:60px;">${field.comment}：</td>
+                    <td style="width:50%">
+                        <input  name="${field.propertyName}" class="mini-datepicker" required="true" />
+                    </td>
+                </tr>
+#else             
+#end
+#elseif(${field.type.indexOf("bigint")}!=-1)   
+				<tr>
+                    <td style="width:60px;">${field.comment}：</td>
+                    <td style="width:50%">
+                        <input  name="${field.propertyName}" class="mini-textbox" style="width:100%;" required="true"  vtype="int" />
+                    </td>
+                </tr> 
+#elseif(${field.type.indexOf("tinyint")}!=-1)
+				<tr>
+                    <td style="width:60px;">${field.comment}：</td>
+                    <td style="width:50%">
+                        <input  name="${field.propertyName}" class="mini-textbox" style="width:100%;" required="true"  vtype="int" />
+                    </td>
+                </tr>   
+#elseif(${field.type.indexOf("float")}!=-1)   
+				<tr>
+                    <td style="width:60px;">${field.comment}：</td>
+                    <td style="width:50%">
+                        <input  name="${field.propertyName}" class="mini-textbox" style="width:100%;" required="true"  vtype="float" />
+                    </td>
+                </tr>
+#elseif(${field.type.indexOf("double")}!=-1)   
+				<tr>
+                    <td style="width:60px;">${field.comment}：</td>
+                    <td style="width:50%">
+                        <input  name="${field.propertyName}" class="mini-textbox" style="width:100%;" required="true"  vtype="float" />
+                    </td>
+                </tr>
+#elseif(${field.type.indexOf("smallint")}!=-1)   
+ 				 <tr>
+                    <td style="width:60px;">${field.comment}：</td>
+                    <td style="width:50%">
+                      <input  name="${field.propertyName}"  showNullItem="flase" class="mini-combobox" textField="text" valueField="id"
+                        data="[{id:'1',text:'1'},{id:'0',text:'0'}]" value="" style="width:80px;" required="true"/>
+                    </td>
+                </tr>
+#elseif(${field.type.indexOf("bit")}!=-1)   
+ 				 <tr>
+                    <td style="width:60px;">${field.comment}：</td>
+                     <td style="width:50%">
+                      <input  name="${field.propertyName}"  showNullItem="flase" class="mini-combobox" textField="text" valueField="id"
+                        data="[{id:'true',text:'true'},{id:'false',text:'false'}]" value="" style="width:80px;" required="true"/>
+                    </td>
+                </tr>
+#elseif(${field.type.indexOf("int")}!=-1)   
+ 				 <tr>
+                    <td style="width:60px;">${field.comment}：</td>
+                    <td style="width:50%">
+                        <input  name="${field.propertyName}" class="mini-textbox" style="width:100%;" required="true"  vtype="int" />
+                    </td>
+                </tr>
+#else 
+ 				 <tr>
+                    <td style="width:60px;">${field.comment}：</td>
+                    <td style="width:50%">
+                        <input  name="${field.propertyName}" class="mini-textbox" style="width:100%;" required="true"  maxLength="30" />
+                    </td>
+                </tr>
+#end
+#end
+#end
+#end
+#end
+            </table>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    mini.parse();
+    var form = new mini.Form("form1");
+	//增加数据源
+    function SaveData() {
+        form.validate();
+        if (form.isValid() == false) 
+            return;
+        var o = form.getData();
+        var json = mini.encode(o);
+        jQuery.ajax({
+            url: "$${name1}Content/$name1.substring(0,1).toUpperCase()$name1.substring(1)Screen.do?action=$name2.substring(0,1).toUpperCase()$name2.substring(1)$name3.substring(0,1).toUpperCase()$name3.substring(1)Action&event_submit_do_edit=method",
+            data: { data: json},
+            dataType: "json",
+            type:"POST",
+            cache: false,
+            success: function (text) {
+                   if(text.status=='FAIL'){
+                        mini.alert(text.message);
+                    }else{
+                      CloseWindow();
+                    }  
+            },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                mini.alert(XMLHttpRequest.status);
+                mini.alert(XMLHttpRequest.readyState);
+                mini.alert(textStatus);
+                mini.alert("保存异常,请重试或联系管理员","操作提示",CloseWindow);
+                }
+        });
+    }
+     
+    function SetData(data) {
+        
+        if (data.action == "edit") {
+         //跨页面传递的数据对象，克隆后才可以安全使用
+            data = mini.clone(data);
+            jQuery.ajax({
+                url: "$${name1}Content/$name1.substring(0,1).toUpperCase()$name1.substring(1)Screen.do?action=$name2.substring(0,1).toUpperCase()$name2.substring(1)$name3.substring(0,1).toUpperCase()$name3.substring(1)Action&event_submit_doViewById=method&id=" + data.id,
+                cache: false,
+                success: function (text) {
+                    var o = mini.decode(text);
+    				 form.setData(o);
+                    form.setChanged(false);
+                },
+                error:function(e){
+                	console.log(e);
+                }
+            });                        
+       }
+	}
+    function CloseWindow(action) {            
+        if (action == "close" && form.isChanged()) {
+            if (mini.confirm("数据被修改了，是否先保存？","确认消息",function (action){
+                if(action =="ok"){
+                    return true;
+                }else{
+                    if (window.CloseOwnerWindow) {
+                        return window.CloseOwnerWindow(action);
+                    }else {
+                        window.close();         
+                    }   
+                }
+            })){
+                return false;
+            }
+        }
+        if (window.CloseOwnerWindow) {
+        	return window.CloseOwnerWindow(action);
+        }else {
+        	window.close();         
+        }   
+    }
+    function onOk(e) {
+        SaveData();
+    }
+    function onCancel(e) {
+        CloseWindow("cancel");
+    }
+    
+</script>

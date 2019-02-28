@@ -1,0 +1,21 @@
+package ${package.Service};
+
+import ${package.Entity}.${entity};
+import ${package.Entity}.Criteria;
+import com.siwill.${package.ModuleName}.webx.common.util.TableDatas;
+
+
+/**
+ * <p>
+ * $!{table.comment} 服务类
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+public interface ${table.serviceName}  {
+    public TableDatas<${entity}> findRecordsByPage(Criteria criteria);
+	public int saveOrUpdate(${entity} record);
+	public ${entity} findRecordByPk(String id);
+	public int delete(String ids);
+}

@@ -1,0 +1,134 @@
+package ${package.Controller};
+
+import ${package.Service}.${table.serviceName};
+#foreach($field in ${table.fields})
+#if($field.name.length()>4&&${field.name.substring(0,4).indexOf("dict")}!=-1)
+import ${package.Service}.SysDictManager;
+#break
+#end
+#end
+import ${package.Entity}.${entity};
+#foreach($field in ${table.fields})
+#if(${field.type.indexOf("date")}!=-1)
+import com.siwill.${package.ModuleName}.dal.datajsonfilter.${entity}Filter;
+#break
+#end
+#end
+import com.alibaba.citrus.turbine.Context;
+import com.alibaba.citrus.turbine.dataresolver.Param;
+import com.alibaba.citrus.turbine.dataresolver.Params;
+import com.siwill.${package.ModuleName}.dal.dataobject.Criteria;
+import com.siwill.${package.ModuleName}.webx.common.WebxConstant;
+import com.siwill.${package.ModuleName}.webx.common.util.AjaxStatus;
+import com.siwill.${package.ModuleName}.webx.common.util.JsonStatus;
+import com.siwill.${package.ModuleName}.webx.common.util.PageUtil;
+import com.siwill.${package.ModuleName}.webx.common.util.TableDatas;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import java.io.IOException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+	#foreach($field in ${table.fields})
+#if($field.name.length()>4&&${field.name.substring(0,4).indexOf("dict")}!=-1)
+import com.siwill.${package.ModuleName}.dal.dataobject.SysDict;
+import java.util.List;
+#break
+#end
+#end
+
+/**
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+public class ${table.controllerName} {
+#foreach($field in ${table.fields})
+#if($field.name.length()>4&&${field.name.substring(0,4).indexOf("dict")}!=-1)
+       @Autowired
+	private SysDictManager sysDictManager;
+#break
+#end
+#end
+  @Autowired
+    public ${table.serviceName} manager;
+	private ObjectMapper mapper = new ObjectMapper();
+	public void doView(Context context, @Params PageUtil page)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		Criteria criteria = new Criteria();
+		page.putCriteria(criteria);
+		TableDatas<${entity}> tableDatas = manager.findRecordsByPage(criteria);
+		#foreach($field in ${table.fields})
+		#if(${field.propertyType.equals("LocalDateTime")})
+		//主要是转换把整形日期转换成字符串日期
+		mapper.getSerializationConfig().addMixInAnnotations(${entity}.class,${entity}Filter.class);// 加上过滤器
+		#break
+		#elseif(${field.propertyType.equals("LocalDate")})
+		//主要是转换把整形日期转换成字符串日期
+		mapper.getSerializationConfig().addMixInAnnotations(${entity}.class,${entity}Filter.class);// 加上过滤器
+		#break
+		#end
+		#end
+		context.put(WebxConstant.WEBX_JSON, mapper.writeValueAsString(tableDatas));
+	}
+
+	public void doEdit(Context context, @Param("data") String dateJson) throws JsonParseException, JsonMappingException, IOException {
+		${entity} record = mapper.readValue(dateJson, ${entity}.class);
+		AjaxStatus as = null;
+		try {
+			int result = manager.saveOrUpdate(record);
+			if (result > 0) {
+				as = new AjaxStatus(JsonStatus.SUCCESS, "更新成功");
+			} else {
+				as = new AjaxStatus(JsonStatus.FAIL, "更新失败");
+			}
+		} catch (Exception e) {
+			as = new AjaxStatus(JsonStatus.FAIL, "执行异常,请重试或联系管理员");
+		}
+		context.put(WebxConstant.WEBX_JSON, mapper.writeValueAsString(as));
+	}
+
+	public void doViewById(Context context, @Param("id") String id)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		${entity} record = manager.findRecordByPk(id);
+		context.put(WebxConstant.WEBX_JSON, mapper.writeValueAsString(record));
+	}
+
+	public void doDelete(Context context, @Param("id") String id)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		AjaxStatus as = null;
+		try {
+			int result = manager.delete(id);
+			if (result > 0) {
+				as = new AjaxStatus(JsonStatus.SUCCESS, "删除成功");
+			} else {
+				as = new AjaxStatus(JsonStatus.FAIL, "删除失败");
+			}
+		} catch (Exception e) {
+			as = new AjaxStatus(JsonStatus.FAIL, "执行异常,请重试或联系管理员");
+		}
+		context.put(WebxConstant.WEBX_JSON, mapper.writeValueAsString(as));
+	}
+	
+	#foreach($field in ${table.fields})
+#if($field.name.length()>4&&${field.name.substring(0,4).indexOf("dict")}!=-1)
+    public void doView${field.capitalName}Json(Context context) throws JsonGenerationException, JsonMappingException, IOException{
+		context.put(WebxConstant.WEBX_JSON,mapper.writeValueAsString(sysDictManager.findType("$field.name.substring(5)")) );
+	}
+#end
+#end
+#foreach($field in ${table.fields})
+#if($field.name.length()>4&&${field.name.substring(0,4).indexOf("dict")}!=-1)
+    public void doViewRendererJson(Context context,@Param("id") String id,@Param("type") String type) throws JsonGenerationException, JsonMappingException, IOException{
+		PageUtil pageUtil = new PageUtil();
+		pageUtil.setKey1(id);
+		pageUtil.setKey3(type);
+		List<SysDict> models = sysDictManager.findSysDictByPage(pageUtil);
+		if(models!=null&&models.size()>0){
+		context.put(WebxConstant.WEBX_JSON,mapper.writeValueAsString(models.get(0).getDicValue()) );
+		}
+	}
+#break
+#end
+#end
+}

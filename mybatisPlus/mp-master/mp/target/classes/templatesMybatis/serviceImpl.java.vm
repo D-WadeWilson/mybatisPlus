@@ -1,0 +1,123 @@
+package ${package.ServiceImpl};
+
+
+import ${package.Entity}.${entity};
+import ${package.Mapper}.${table.mapperName};
+import ${package.Service}.${table.serviceName};
+import java.util.List;
+import ${package.Entity}.Criteria;
+import com.siwill.${package.ModuleName}.webx.common.util.TableDatas;
+import org.springframework.beans.factory.annotation.Autowired;
+#foreach($field in ${table.fields})
+#if($field.capitalName.equals("CreateTime"))
+import java.util.Date;
+#break
+#end
+#if($field.capitalName.equals("UpdateTime"))
+import java.util.Date;
+#break
+#end
+#end
+#foreach($field in ${table.fields})
+#if(${field.keyFlag})
+	#if(${field.propertyType.equals("String")})
+import java.util.UUID;
+#end
+#end
+#end
+/**
+ * <p>
+ * $!{table.comment} 服务实现类
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+
+public class ${table.serviceImplName} implements ${table.serviceName} {
+
+
+    @Autowired
+    private ${table.mapperName} ${table.entityPath}Mapper;
+    
+     public TableDatas<${entity}> findRecordsByPage(Criteria criteria){
+     	TableDatas<${entity}> tableDatas = new TableDatas<${entity}>();
+		int total = 0;
+  		List<${entity}> list = ${table.entityPath}Mapper.selectByExample(criteria);
+		total = ${table.entityPath}Mapper.countByExample(criteria);
+		tableDatas.setData(list);
+		tableDatas.setTotal(total);
+		return tableDatas;
+     
+     }
+	public int saveOrUpdate(${entity} record){
+		int result = 0;
+#foreach($field in ${table.fields})
+	#if(${field.keyFlag})
+		#if(${field.propertyType.equals("Integer")})
+		if(record.get${field.capitalName}()==null){
+		#foreach($field in ${table.fields})
+#if($field.capitalName.equals("CreateTime"))
+		record.set${field.capitalName}(new Date());
+#end
+#end
+		record.set${field.capitalName}(null);
+		result = ${table.entityPath}Mapper.insert(record);
+		}
+	#end
+#end
+#if(${field.keyFlag})
+	#if(${field.propertyType.equals("String")})
+		if(record.get${field.capitalName}()==null||record.get${field.capitalName}().equals("")){
+#foreach($field in ${table.fields})
+#if($field.capitalName.equals("CreateTime"))
+		record.set${field.capitalName}(new Date());
+#end
+#end
+			record.set${field.capitalName}(UUID.randomUUID().toString());
+			result = ${table.entityPath}Mapper.insert(record);
+		}
+	#end
+#end
+#end
+	    else {
+#foreach($field in ${table.fields})
+#if($field.capitalName.equals("UpdateTime"))
+			record.set${field.capitalName}(new Date());
+#end
+#end
+			result = ${table.entityPath}Mapper.updateByPrimaryKeySelective(record);
+		}
+		return result;
+	}
+	public ${entity} findRecordByPk(String id){
+	#foreach($field in ${table.fields})
+		#if(${field.keyFlag})
+		#if(${field.propertyType.equals("Integer")})
+				return ${table.entityPath}Mapper.selectByPrimaryKey(Integer.parseInt(id));
+		#end
+		#if(${field.propertyType.equals("String")})
+			return ${table.entityPath}Mapper.selectByPrimaryKey(id);
+		#end
+		#end
+		#end
+		
+	}
+	public int delete(String ids){
+	String[] idsArray = ids.split(",");
+		int result = 0;
+		for (String id : idsArray) {
+		#foreach($field in ${table.fields})
+		#if(${field.keyFlag})
+		#if(${field.propertyType.equals("Integer")})
+			result +=  ${table.entityPath}Mapper.deleteByPrimaryKey(Integer.parseInt(id));
+		#end
+		#if(${field.propertyType.equals("String")})
+			result +=  ${table.entityPath}Mapper.deleteByPrimaryKey(id);
+		#end
+		#end
+		#end
+		}
+		return result;
+	}
+}

@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${package.Mapper}.${table.mapperName}">
+
+#if(${enableCache})
+   <!-- 开启二级缓存 -->
+   <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+#end
+#if(${baseResultMap})
+   <!-- 通用查询映射结果 -->
+   <resultMap id="BaseResultMap" type="${package.Entity}.${entity}">
+#foreach($field in ${table.fields})
+#if(${field.keyFlag})##生成主键排在第一位
+	#if(${field.type.indexOf("varchar")}!=-1)
+  <result column="${field.name}" property="${field.propertyName}" jdbcType="VARCHAR"/>  
+#elseif(${field.type.indexOf("char")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="CHAR"/>
+ #elseif(${field.type.indexOf("json")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="VARCHAR"/>  
+ #elseif(${field.type.indexOf("text")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="VARCHAR"/>  
+ #elseif(${field.type.indexOf("tinytext")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="VARCHAR"/>
+  #elseif(${field.type.indexOf("datetime")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="TIMESTAMP"/>
+   #elseif(${field.type.indexOf("timestamp")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="TIMESTAMP"/>
+     #elseif(${field.type.indexOf("time")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="TIME"/>
+     #elseif(${field.type.indexOf("year")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="DATE"/>
+  #elseif(${field.type.indexOf("date")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="DATE"/>
+  #elseif(${field.type.indexOf("bigint")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="BIGINT"/>
+  #elseif(${field.type.indexOf("tinyint")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="TINYINT"/>  
+    #elseif(${field.type.indexOf("float")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="REAL"/>   
+    #elseif(${field.type.indexOf("double")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="DOUBLE"/> 
+      #elseif(${field.type.indexOf("int")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="INTEGER"/>
+     #elseif(${field.type.indexOf("decimal")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="DECIMAL"/>    
+    #elseif(${field.type.indexOf("bit")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="BIT"/>
+#else
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="${field.propertyType}"/>  
+#end
+#end
+#end
+#foreach($field in ${table.commonFields})##生成公共字段
+#if(${field.type.indexOf("varchar")}!=-1)
+  <result column="${field.name}" property="${field.propertyName}" jdbcType="VARCHAR"/>  
+#elseif(${field.type.indexOf("char")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="CHAR"/>
+ #elseif(${field.type.indexOf("json")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="VARCHAR"/>  
+ #elseif(${field.type.indexOf("text")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="VARCHAR"/>  
+ #elseif(${field.type.indexOf("tinytext")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="VARCHAR"/>
+  #elseif(${field.type.indexOf("datetime")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="TIMESTAMP"/>
+   #elseif(${field.type.indexOf("timestamp")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="TIMESTAMP"/>
+     #elseif(${field.type.indexOf("time")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="TIME"/>
+     #elseif(${field.type.indexOf("year")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="DATE"/>
+  #elseif(${field.type.indexOf("date")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="DATE"/>  
+  #elseif(${field.type.indexOf("bigint")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="BIGINT"/> 
+   #elseif(${field.type.indexOf("tinyint")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="TINYINT"/> 
+    #elseif(${field.type.indexOf("float")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="REAL"/> 
+     #elseif(${field.type.indexOf("double")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="DOUBLE"/> 
+     #elseif(${field.type.indexOf("int")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="INTEGER"/>
+      #elseif(${field.type.indexOf("decimal")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="DECIMAL"/>  
+    #elseif(${field.type.indexOf("bit")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="BIT"/>    
+#else
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="${field.propertyType}"/>  
+#end
+#end
+#foreach($field in ${table.fields})
+#if(!${field.keyFlag})##生成普通字段
+#if(${field.type.indexOf("varchar")}!=-1)
+  <result column="${field.name}" property="${field.propertyName}" jdbcType="VARCHAR"/>  
+#elseif(${field.type.indexOf("char")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="CHAR"/>
+ #elseif(${field.type.indexOf("json")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="VARCHAR"/>  
+ #elseif(${field.type.indexOf("text")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="VARCHAR"/>  
+ #elseif(${field.type.indexOf("tinytext")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="VARCHAR"/>
+  #elseif(${field.type.indexOf("datetime")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="TIMESTAMP"/>
+    #elseif(${field.type.indexOf("timestamp")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="TIMESTAMP"/>
+     #elseif(${field.type.indexOf("time")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="TIME"/>
+     #elseif(${field.type.indexOf("year")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="DATE"/>
+  #elseif(${field.type.indexOf("date")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="DATE"/> 
+  #elseif(${field.type.indexOf("bigint")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="BIGINT"/>     
+   #elseif(${field.type.indexOf("tinyint")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="TINYINT"/> 
+   #elseif(${field.type.indexOf("float")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="REAL"/>     
+    #elseif(${field.type.indexOf("double")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="DOUBLE"/> 
+      #elseif(${field.type.indexOf("int")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="INTEGER"/>
+      #elseif(${field.type.indexOf("decimal")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="DECIMAL"/>  
+    #elseif(${field.type.indexOf("bit")}!=-1)   
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="BIT"/>
+#else
+ <result column="${field.name}" property="${field.propertyName}" jdbcType="${field.propertyType}"/>  
+#end
+#end
+#end
+   </resultMap>
+
+#end
+#if(${baseColumnList})
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+#foreach($field in ${table.commonFields})
+   #if(${field.name} == ${field.propertyName})${field.name}#else${field.name} AS ${field.propertyName}#end,
+#end
+        ${table.fieldNames}
+    </sql>
+#end
+   <sql id="Example_Where_Clause" >
+    	<trim prefix="where" prefixOverrides="and|or" >
+#foreach($field in ${table.fields})
+#if(${field.keyFlag})##生成主键排在第一位
+	    <if test="condition.${field.propertyName} != null" >
+	        and ${field.name} = #{condition.${field.propertyName}}
+	    </if>
+#end
+#end
+#foreach($field in ${table.commonFields})##生成公共字段
+	   <if test="condition.${field.propertyName} != null" >
+	      and ${field.name} = #{condition.${field.propertyName}}
+	   </if>
+#end
+#foreach($field in ${table.fields})
+#if(!${field.keyFlag})##生成普通字段
+	   <if test="condition.${field.propertyName} != null" >
+	     and ${field.name} = #{condition.${field.propertyName}}
+	   </if>
+#end
+#end
+      </trim>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="${package.Entity}.Criteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ${table.name}
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <include refid="common.Mysql_Pagination_Limit" />
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+   from ${table.name}
+    where id = #{id}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+   delete from ${table.name}
+    where id = #{id}
+  </delete>
+  <delete id="deleteByExample" parameterType="${package.Entity}.Criteria" >
+    delete from ${table.name}
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+     </if>
+  </delete>
+  <insert id="insert" parameterType="${package.Entity}.${entity}" >
+    insert into ${table.name} (
+   #foreach($field in ${table.commonFields})
+   #if(${field.name} == ${field.propertyName})${field.name}#else${field.name} AS ${field.propertyName}#end,
+   #end
+        ${table.fieldNames}
+  	)
+    values (
+#foreach($field in ${table.fields})
+#if(${field.keyFlag})##生成主键排在第一位
+	#{${field.propertyName}}#if($foreach.hasNext),#end
+#end
+#end
+#foreach($field in ${table.commonFields})##生成公共字段
+	#{${field.propertyName}}#if($foreach.hasNext),#end
+#end
+#foreach($field in ${table.fields})
+#if(!${field.keyFlag})##生成普通字段
+	#{${field.propertyName}}#if($foreach.hasNext),#end
+#end
+#end
+    )
+  </insert>
+   <insert id="insertSelective" parameterType="${package.Entity}.${entity}" >
+    insert into ${table.name}
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+#foreach($field in ${table.fields})
+#if(${field.keyFlag})##生成主键排在第一位
+		<if test="${field.name} != null" >
+		        ${field.name}#if($foreach.hasNext),#end
+		        
+		</if>
+#end
+#end
+#foreach($field in ${table.commonFields})##生成公共字段
+      <if test="${field.name} != null" >
+		        ${field.name}#if($foreach.hasNext),#end
+		        
+		</if>
+#end
+#foreach($field in ${table.fields})
+#if(!${field.keyFlag})##生成普通字段
+        <if test="${field.name} != null" >
+		        ${field.name}#if($foreach.hasNext),#end
+		        
+		</if>
+#end
+#end
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #foreach($field in ${table.fields})
+#if(${field.keyFlag})##生成主键排在第一位
+		<if test="${field.name} != null" >
+		        #{${field.propertyName}}#if($foreach.hasNext),#end
+		        
+		</if>
+#end
+#end
+#foreach($field in ${table.commonFields})##生成公共字段
+      <if test="${field.name} != null" >
+		        #{${field.propertyName}}#if($foreach.hasNext),#end
+		        
+		</if>
+#end
+#foreach($field in ${table.fields})
+#if(!${field.keyFlag})##生成普通字段
+        <if test="${field.name} != null" >
+		        #{${field.propertyName}}#if($foreach.hasNext),#end
+		        
+		</if>
+#end
+#end
+    </trim>
+  </insert>
+   <select id="countByExample" parameterType="${package.Entity}.Criteria" resultType="java.lang.Integer" >
+    select count(*) from ${table.name}
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ${table.name}
+    <set >
+      #foreach($field in ${table.fields})
+#if(${field.keyFlag})##生成主键排在第一位
+		<if test="record.${field.propertyName} != null" >
+		        ${field.name}=#{record.${field.propertyName}}#if($foreach.hasNext),#end
+		        
+		</if>
+#end
+#end
+#foreach($field in ${table.commonFields})##生成公共字段
+     <if test="record.${field.propertyName} != null" >
+		        ${field.name}=#{record.${field.propertyName}}#if($foreach.hasNext),#end
+		        
+		</if>
+#end
+#foreach($field in ${table.fields})
+#if(!${field.keyFlag})##生成普通字段
+       <if test="record.${field.propertyName} != null" >
+		        ${field.name}=#{record.${field.propertyName}}#if($foreach.hasNext),#end
+		        
+		</if>
+#end
+#end
+    </set >
+	    <if test="_parameter != null" >
+	      <include refid="Example_Where_Clause" />
+	    </if>
+  </update>
+  
+  <update id="updateByExample" parameterType="map" >
+  update ${table.name} set
+     #foreach($field in ${table.fields})
+#if(${field.keyFlag})##生成主键排在第一位
+		        ${field.name}=#{record.${field.propertyName}}#if($foreach.hasNext),#end
+#end
+#end
+#foreach($field in ${table.commonFields})##生成公共字段
+		        ${field.name}=#{record.${field.propertyName}}#if($foreach.hasNext),#end
+#end
+#foreach($field in ${table.fields})
+#if(!${field.keyFlag})##生成普通字段
+		        ${field.name}=#{record.${field.propertyName}}#if($foreach.hasNext),#end
+#end
+#end
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+      
+    </if>
+  </update>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="${package.Entity}.${entity}" >
+    update ${table.name}
+    <set >
+
+#foreach($field in ${table.commonFields})##生成公共字段
+     <if test="${field.propertyName} != null" >
+		   ${field.name}=#{${field.propertyName}}#if($foreach.hasNext),#end
+		   
+	 </if>
+#end
+#foreach($field in ${table.fields})
+#if(!${field.keyFlag})##生成普通字段
+    <if test="${field.propertyName} != null" >
+		  ${field.name}=#{${field.propertyName}}#if($foreach.hasNext),#end
+		  
+	 </if>
+#end
+#end
+    </set>
+    where   #foreach($field in ${table.fields})
+#if(${field.keyFlag})##生成主键排在第一位
+	${field.name}=#{${field.propertyName}}
+#end
+#end
+  </update>
+  <update id="updateByPrimaryKey" parameterType="${package.Entity}.${entity}" >
+    update sys_news_type
+    set #foreach($field in ${table.commonFields})##生成公共字段
+     <if test="record.${field.propertyName} != null" >
+		       ${field.name}=#{record.${field.propertyName}}#if($foreach.hasNext),#end
+		       
+	 </if>
+#end
+#foreach($field in ${table.fields})
+#if(!${field.keyFlag})##生成普通字段
+     <if test="record.${field.propertyName} != null" >
+		      ${field.name}=#{record.${field.propertyName}}#if($foreach.hasNext),#end
+		      
+	 </if>
+#end
+#end	
+    where   #foreach($field in ${table.fields})
+#if(${field.keyFlag})##生成主键排在第一位
+    ${field.name}=#{record.${field.propertyName}}
+#end
+#end
+  </update>
+</mapper>

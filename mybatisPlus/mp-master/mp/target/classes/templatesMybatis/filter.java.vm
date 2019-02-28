@@ -1,0 +1,17 @@
+package com.siwill.${package.ModuleName}.dal.datajsonfilter;
+import com.siwill.${package.ModuleName}.dal.datajsonfilter.assist.DateTimeSerializer;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import java.util.Date;
+public class ${entity}Filter  {
+	## ----------  BEGIN 字段循环遍历  ----------
+	#foreach($field in ${table.fields})
+	#if(${field.propertyType.equals("LocalDateTime")})
+	@JsonSerialize(using = DateTimeSerializer.class)
+	private Date ${field.propertyName};
+	#elseif(${field.propertyType.equals("LocalDate")})
+	@JsonSerialize(using = DateTimeSerializer.class)
+	private Date ${field.propertyName};
+	#end
+	#end
+	## ----------  END 字段循环遍历  ----------
+}
